@@ -92,9 +92,13 @@ async function generateBanner() {
   const h = 400;
   const cx = w / 2;
   const logoY = 150;
-  // The exact favicon asset, embedded directly into the banner center.
+  // Embed the EXACT favicon the website uses (assets/favicon.svg from index.html).
   const faviconSize = 164;
-  const faviconPng = await pngBuffer(faviconSvg(512), 512, 512);
+  const faviconSvgSource = await fs.readFile(
+    path.join(ROOT, "assets", "favicon.svg"),
+    "utf8"
+  );
+  const faviconPng = await pngBuffer(faviconSvgSource, 512, 512);
   const faviconUri = `data:image/png;base64,${faviconPng.toString("base64")}`;
   const svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -151,8 +155,14 @@ async function copyToSiteAssets() {
 }
 
 async function main() {
-  await generateBanner();
+  // Favicon first so the banner can embed the exact assets/favicon.svg.
   await generateMark();
+  await fs.mkdir(path.join(ROOT, "assets"), { recursive: true });
+  await fs.copyFile(
+    path.join(OUT_DIR, "favicon.svg"),
+    path.join(ROOT, "assets", "favicon.svg")
+  );
+  await generateBanner();
   await copyToSiteAssets();
   console.log("README assets generated in .github/assets/ (banner + mark + favicon)");
   console.log("Site assets copied to assets/");
