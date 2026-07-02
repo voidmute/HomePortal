@@ -99,52 +99,47 @@ async function generateBanner() {
     <circle cx="1130" cy="70" r="7" fill="${COLOR.rose}" opacity="0.55"/>
     <circle cx="1200" cy="200" r="4" fill="${COLOR.amberDark}" opacity="0.5"/>
     <circle cx="90" cy="210" r="4" fill="${COLOR.sage}" opacity="0.5"/>
-    <path d="${scriptTextPath("Home", 132, cx - 155, logoY + 44, "end")}" fill="${COLOR.espresso}"/>
-    <circle cx="${cx}" cy="${logoY}" r="94" fill="${COLOR.cream}" stroke="${COLOR.amber}" stroke-width="6"/>
-    <g transform="translate(${cx} ${logoY}) scale(0.135) translate(-512 -512)">
-      <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
+    <path d="${scriptTextPath("Home", 132, cx - 160, logoY + 44, "end")}" fill="${COLOR.espresso}"/>
+    <rect x="${cx - 82}" y="${logoY - 82}" width="164" height="164" rx="44" fill="${COLOR.espresso}"/>
+    <g transform="translate(${cx} ${logoY}) scale(0.125) translate(-512 -512)">
+      <path d="${mark}" fill="${COLOR.amber}" fill-rule="evenodd"/>
     </g>
-    <path d="${scriptTextPath("Portal", 132, cx + 155, logoY + 44, "start")}" fill="${COLOR.espresso}"/>
+    <path d="${scriptTextPath("Portal", 132, cx + 160, logoY + 44, "start")}" fill="${COLOR.espresso}"/>
     <text x="${cx}" y="315" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="${COLOR.amberDark}">Уютный self-hosted портал для всей семьи</text>
     <text x="${cx}" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" letter-spacing="2" fill="${COLOR.stone}">NEXT.JS · POSTGRES · DOCKER · CLOUDFLARE TUNNEL · ANDROID / iOS</text>
     </g>
   </svg>`;
   await writePng(svg, path.join(OUT_DIR, "banner.png"), w, h);
+  await writePng(svg, path.join(OUT_DIR, "banner-v2.png"), w, h);
+}
+
+// Favicon badge: espresso rounded-square with an amber portal arch.
+function faviconSvg(size) {
+  const mark = archPath({});
+  const rx = size * 0.24;
+  const scale = 0.42 * (size / 512);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${size}" height="${size}" rx="${rx}" fill="${COLOR.espresso}"/>
+    <g transform="translate(${size / 2} ${size / 2}) scale(${scale}) translate(-512 -512)">
+      <path d="${mark}" fill="${COLOR.amber}" fill-rule="evenodd"/>
+    </g>
+  </svg>`;
 }
 
 async function generateMark() {
-  // Same arch as the README banner center — cream background, espresso portal mark.
-  const sizes = [
+  for (const { name, size } of [
     { name: "mark.png", size: 180 },
-    { name: "favicon-32.png", size: 32 },
-  ];
-  const mark = archPath({});
-
-  for (const { name, size } of sizes) {
-    const scale = size <= 32 ? 0.26 : 0.30;
-    const svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${size}" height="${size}" rx="${size / 2}" fill="${COLOR.cream}"/>
-    <g transform="translate(${size / 2} ${size / 2}) scale(${scale}) translate(-512 -512)">
-      <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
-    </g>
-  </svg>`;
-    await writePng(svg, path.join(OUT_DIR, name), size, size);
+    { name: "favicon-32.png", size: 64 },
+  ]) {
+    await writePng(faviconSvg(size), path.join(OUT_DIR, name), size, size);
   }
-
-  // SVG favicon for crisp rendering at any size
-  const svgIcon = `<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
-    <rect width="180" height="180" rx="90" fill="${COLOR.cream}"/>
-    <g transform="translate(90 90) scale(0.30) translate(-512 -512)">
-      <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
-    </g>
-  </svg>`;
-  await fs.writeFile(path.join(OUT_DIR, "favicon.svg"), svgIcon);
+  await fs.writeFile(path.join(OUT_DIR, "favicon.svg"), faviconSvg(180));
 }
 
 async function copyToSiteAssets() {
   const siteDir = path.join(ROOT, "assets");
   await fs.mkdir(siteDir, { recursive: true });
-  for (const file of ["mark.png", "favicon-32.png", "favicon.svg", "banner.png"]) {
+  for (const file of ["mark.png", "favicon-32.png", "favicon.svg", "banner.png", "banner-v2.png"]) {
     const src = path.join(OUT_DIR, file);
     if (await fs.stat(src).catch(() => null)) {
       await fs.copyFile(src, path.join(siteDir, file));
