@@ -99,11 +99,12 @@ async function generateBanner() {
     <circle cx="1130" cy="70" r="7" fill="${COLOR.rose}" opacity="0.55"/>
     <circle cx="1200" cy="200" r="4" fill="${COLOR.amberDark}" opacity="0.5"/>
     <circle cx="90" cy="210" r="4" fill="${COLOR.sage}" opacity="0.5"/>
-    <path d="${scriptTextPath("Home", 132, cx - 130, logoY + 44, "end")}" fill="${COLOR.espresso}"/>
-    <g transform="translate(${cx} ${logoY}) scale(${markScale}) translate(-512 -512)">
+    <path d="${scriptTextPath("Home", 132, cx - 155, logoY + 44, "end")}" fill="${COLOR.espresso}"/>
+    <circle cx="${cx}" cy="${logoY}" r="94" fill="${COLOR.cream}" stroke="${COLOR.amber}" stroke-width="6"/>
+    <g transform="translate(${cx} ${logoY}) scale(0.135) translate(-512 -512)">
       <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
     </g>
-    <path d="${scriptTextPath("Portal", 132, cx + 130, logoY + 44, "start")}" fill="${COLOR.espresso}"/>
+    <path d="${scriptTextPath("Portal", 132, cx + 155, logoY + 44, "start")}" fill="${COLOR.espresso}"/>
     <text x="${cx}" y="315" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="${COLOR.amberDark}">Уютный self-hosted портал для всей семьи</text>
     <text x="${cx}" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" letter-spacing="2" fill="${COLOR.stone}">NEXT.JS · POSTGRES · DOCKER · CLOUDFLARE TUNNEL · ANDROID / iOS</text>
     </g>
