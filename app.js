@@ -55,12 +55,6 @@ const INSTALL = {
     prompt: "user@server:~$",
     cmd: "curl -fsSL https://raw.githubusercontent.com/voidmute/HomePortal/main/scripts/bootstrap-cli.sh | sudo bash",
   },
-  macos: {
-    label: "macOS",
-    title: "you@mac — zsh",
-    prompt: "you@mac ~ %",
-    cmd: "curl -fsSL https://raw.githubusercontent.com/voidmute/HomePortal/main/scripts/bootstrap-cli.sh | bash",
-  },
   windows: {
     label: "Windows · PowerShell",
     title: "Windows PowerShell",
@@ -73,11 +67,10 @@ function detectOS() {
   if (typeof navigator === "undefined") return "linux";
   const ua = (navigator.userAgent || "") + " " + (navigator.platform || "");
   if (/windows|win32|win64/i.test(ua)) return "windows";
-  if (/mac|iphone|ipad|ipod/i.test(ua)) return "macos";
-  return "linux"; // Ubuntu is the real deployment target — sensible default
+  return "linux"; // Ubuntu is the real deployment target; macOS is unsupported
 }
 
-const OS_NAME = { linux: "Ubuntu / Linux", macos: "macOS", windows: "Windows" };
+const OS_NAME = { linux: "Ubuntu / Linux", windows: "Windows" };
 
 /* ---------------------------------------------------------------- nav */
 function Nav() {

@@ -7,7 +7,7 @@ import { ScriptRunner } from "../components/ScriptRunner.js";
 import { theme } from "../theme.js";
 import { getRepoRoot, scriptPath } from "../lib/env.js";
 import { getAuthorizedUserNames } from "../lib/users.js";
-import { allCriticalPassed, runPreflightChecks } from "../lib/preflight.js";
+import { allCriticalPassed, isWindows, runPreflightChecks } from "../lib/preflight.js";
 
 type WizardStep = "preflight" | "domain" | "tunnel" | "confirm" | "install" | "done";
 
@@ -42,7 +42,7 @@ export function InstallWizard({ onBack }: InstallWizardProps) {
         <Header subtitle="Мастер установки" />
         <StepProgress current={1} total={5} label="Проверка окружения" />
         {preflightOk === null ? (
-          <Text color={theme.stone}>Проверяем root, Ubuntu, GitHub...</Text>
+          <Text color={theme.stone}>Проверяем окружение, Git и доступ к репозиторию...</Text>
         ) : preflightOk ? (
           <Box flexDirection="column">
             <Text color={theme.success}>✓ Можно продолжать</Text>
@@ -51,9 +51,11 @@ export function InstallWizard({ onBack }: InstallWizardProps) {
         ) : (
           <Box flexDirection="column">
             <Text color={theme.error}>
-              Не все проверки пройдены. Настройте deploy key и запустите с sudo.
+              {isWindows
+                ? "Не все проверки пройдены. Установите Git и Docker Desktop, затем повторите."
+                : "Не все проверки пройдены. Установите Git и запустите с sudo."}
             </Text>
-            <Text color={theme.muted}>См. docs/QUICKSTART-RU.md</Text>
+            <Text color={theme.muted}>Подробнее: docs/QUICKSTART-RU.md</Text>
             <ConfirmInput onConfirm={onBack} onCancel={onBack} />
           </Box>
         )}
