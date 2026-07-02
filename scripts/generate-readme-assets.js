@@ -70,13 +70,32 @@ async function writePng(svg, outPath, width, height) {
   await sharp(Buffer.from(svg), { density: 300 }).resize(width, height).png().toFile(outPath);
 }
 
+async function pngBuffer(svg, width, height) {
+  return sharp(Buffer.from(svg), { density: 300 }).resize(width, height).png().toBuffer();
+}
+
+// Favicon badge: espresso rounded-square with an amber portal arch.
+function faviconSvg(size) {
+  const mark = archPath({});
+  const rx = size * 0.24;
+  const scale = 0.42 * (size / 512);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${size}" height="${size}" rx="${rx}" fill="${COLOR.espresso}"/>
+    <g transform="translate(${size / 2} ${size / 2}) scale(${scale}) translate(-512 -512)">
+      <path d="${mark}" fill="${COLOR.amber}" fill-rule="evenodd"/>
+    </g>
+  </svg>`;
+}
+
 async function generateBanner() {
   const w = 1280;
   const h = 400;
   const cx = w / 2;
   const logoY = 150;
-  const markScale = 0.30;
-  const mark = archPath({});
+  // The exact favicon asset, embedded directly into the banner center.
+  const faviconSize = 164;
+  const faviconPng = await pngBuffer(faviconSvg(512), 512, 512);
+  const faviconUri = `data:image/png;base64,${faviconPng.toString("base64")}`;
   const svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="bg" x1="0" y1="0" x2="${w}" y2="${h}" gradientUnits="userSpaceOnUse">
@@ -100,10 +119,7 @@ async function generateBanner() {
     <circle cx="1200" cy="200" r="4" fill="${COLOR.amberDark}" opacity="0.5"/>
     <circle cx="90" cy="210" r="4" fill="${COLOR.sage}" opacity="0.5"/>
     <path d="${scriptTextPath("Home", 132, cx - 160, logoY + 44, "end")}" fill="${COLOR.espresso}"/>
-    <rect x="${cx - 82}" y="${logoY - 82}" width="164" height="164" rx="44" fill="${COLOR.espresso}"/>
-    <g transform="translate(${cx} ${logoY}) scale(0.125) translate(-512 -512)">
-      <path d="${mark}" fill="${COLOR.amber}" fill-rule="evenodd"/>
-    </g>
+    <image href="${faviconUri}" x="${cx - faviconSize / 2}" y="${logoY - faviconSize / 2}" width="${faviconSize}" height="${faviconSize}" />
     <path d="${scriptTextPath("Portal", 132, cx + 160, logoY + 44, "start")}" fill="${COLOR.espresso}"/>
     <text x="${cx}" y="315" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="${COLOR.amberDark}">Уютный self-hosted портал для всей семьи</text>
     <text x="${cx}" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" letter-spacing="2" fill="${COLOR.stone}">NEXT.JS · POSTGRES · DOCKER · CLOUDFLARE TUNNEL · ANDROID / iOS</text>
@@ -111,19 +127,6 @@ async function generateBanner() {
   </svg>`;
   await writePng(svg, path.join(OUT_DIR, "banner.png"), w, h);
   await writePng(svg, path.join(OUT_DIR, "banner-v2.png"), w, h);
-}
-
-// Favicon badge: espresso rounded-square with an amber portal arch.
-function faviconSvg(size) {
-  const mark = archPath({});
-  const rx = size * 0.24;
-  const scale = 0.42 * (size / 512);
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${size}" height="${size}" rx="${rx}" fill="${COLOR.espresso}"/>
-    <g transform="translate(${size / 2} ${size / 2}) scale(${scale}) translate(-512 -512)">
-      <path d="${mark}" fill="${COLOR.amber}" fill-rule="evenodd"/>
-    </g>
-  </svg>`;
 }
 
 async function generateMark() {
