@@ -34,4 +34,13 @@ describe("checkRateLimit (in-memory fallback)", () => {
     expect(blockedA.allowed).toBe(false);
     expect(allowedB.allowed).toBe(true);
   });
+
+  it("drops expired keys during later checks", async () => {
+    const key = `test:expired:${Math.random()}`;
+    await checkRateLimit(key, 1, 1);
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    const again = await checkRateLimit(key, 1, 60_000);
+    expect(again.allowed).toBe(true);
+    expect(again.remaining).toBe(0);
+  });
 });

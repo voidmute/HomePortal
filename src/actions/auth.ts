@@ -7,11 +7,18 @@ import { getSession } from "@/lib/auth";
 import { getClientIp } from "@/lib/ip";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { generateSecret, verifyToken, generateQRDataURL } from "@/lib/totp";
+import { decryptSecret, encryptSecret, isEncryptedSecret } from "@/lib/crypto";
 import { msg } from "@/lib/messages";
 
 export type AuthResult =
   | { success: true; requiresTotp: boolean; isFirstSetup: boolean; qrCode?: string }
   | { success: false; error: string };
+
+function isEnrollmentOpen(): boolean {
+  const value = process.env.TOTP_ENROLLMENT_OPEN;
+  if (value === undefined) return true;
+  return value === "true" || value === "1";
+}
 
 export async function verifyName(name: string): Promise<AuthResult> {
   try {
@@ -26,8 +33,21 @@ export async function verifyName(name: string): Promise<AuthResult> {
     if (!user) return { success: false, error: msg.accessDenied };
 
     if (!user.isTotpSetup) {
+      if (!isEnrollmentOpen()) {
+        return { success: false, error: msg.accessDenied };
+      }
+
       const secret = generateSecret();
-      await db.update(users).set({ totpSecret: secret }).where(eq(users.id, user.id));
+      const encryptedSecret = encryptSecret(secret);
+      await db.update(users).set({ totpSecret: encryptedSecret }).where(eq(users.id, user.id));
+
+      await db.insert(auditLogs).values({
+        userId: user.id,
+        action: "TOTP_ENROLLMENT",
+        ipAddress: ip,
+        metadata: { username: user.name },
+      });
+
       const qrCode = await generateQRDataURL(user.name, secret);
       return { success: true, requiresTotp: true, isFirstSetup: true, qrCode };
     }
@@ -49,12 +69,20 @@ export async function verifyTotp(name: string, code: string): Promise<AuthResult
     const [user] = await db.select().from(users).where(eq(users.name, trimmed)).limit(1);
     if (!user || !user.totpSecret) return { success: false, error: msg.accessDenied };
 
-    if (!verifyToken(user.totpSecret, code)) {
+    const secret = decryptSecret(user.totpSecret);
+    if (!verifyToken(secret, code)) {
       return { success: false, error: msg.invalidTotp };
     }
 
+    const updates: { isTotpSetup?: boolean; totpSecret?: string } = {};
     if (!user.isTotpSetup) {
-      await db.update(users).set({ isTotpSetup: true }).where(eq(users.id, user.id));
+      updates.isTotpSetup = true;
+    }
+    if (!isEncryptedSecret(user.totpSecret)) {
+      updates.totpSecret = encryptSecret(secret);
+    }
+    if (Object.keys(updates).length > 0) {
+      await db.update(users).set(updates).where(eq(users.id, user.id));
     }
 
     const session = await getSession();

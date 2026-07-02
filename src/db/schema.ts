@@ -5,7 +5,7 @@ export const userRoleEnum = pgEnum("user_role", ["ADMIN", "USER"]);
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 64 }).notNull().unique(),
-  totpSecret: varchar("totp_secret", { length: 128 }),
+  totpSecret: varchar("totp_secret", { length: 512 }),
   isTotpSetup: boolean("is_totp_setup").notNull().default(false),
   role: userRoleEnum("role").notNull().default("USER"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

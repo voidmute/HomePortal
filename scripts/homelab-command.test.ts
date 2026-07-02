@@ -29,7 +29,7 @@ describe("homelab end-user command", () => {
     expect(installer).toContain("HOMELAB_BIN_DIR");
     expect(installer).toContain("__HOMELAB_REPO_DIR__");
     expect(launcher).toContain("Run: sudo homelab");
-    expect(launcher).toContain("npm run start --prefix cli");
+    expect(launcher).toContain("npm run start:linux --prefix cli");
   });
 
   test("bootstrap installs the global command and then launches homelab", () => {

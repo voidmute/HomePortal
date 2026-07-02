@@ -20,6 +20,7 @@ else
   run_migration drizzle/migrations/0001_seed.sql
   run_migration drizzle/migrations/0002_user_roles.sql
 fi
+run_migration drizzle/migrations/0003_totp_secret_widen.sql
 
 echo "Запуск приложения..."
 exec "$@"

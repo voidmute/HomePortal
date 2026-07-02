@@ -30,6 +30,8 @@ export const msg = {
   fileNotFound: "Файл не найден. Возможно, он был удалён.",
   cannotDownloadDir: "Папки нельзя скачать — выберите отдельный файл.",
   noFileProvided: "Выберите файл для загрузки.",
+  fileTooLarge: "Файл слишком большой. Выберите файл меньшего размера.",
+  fileExists: "Файл с таким именем уже существует. Переименуйте файл или удалите старый.",
   fileOperationFailed: "Не удалось выполнить операцию с файлом.",
   metricsUnavailable: "Данные пока недоступны. Обновите страницу.",
   backupFailed: "Не удалось сохранить копию. Попробуйте позже.",
@@ -191,5 +193,7 @@ export function overallStatusLabel(status: string | undefined): string {
 export function apiErrorStatus(message: string): number {
   if (message === msg.unauthorized) return 401;
   if (message === msg.forbidden) return 403;
+  if (message === msg.fileTooLarge) return 413;
+  if (message === msg.fileExists) return 409;
   return 400;
 }

@@ -57,6 +57,11 @@ function checkMemory(
   windowMs: number
 ): { allowed: boolean; remaining: number } {
   const now = Date.now();
+  memoryStore.forEach((entry, storedKey) => {
+    if (now > entry.resetAt) {
+      memoryStore.delete(storedKey);
+    }
+  });
   const entry = memoryStore.get(key);
   if (!entry || now > entry.resetAt) {
     memoryStore.set(key, { count: 1, resetAt: now + windowMs });

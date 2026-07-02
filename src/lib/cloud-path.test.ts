@@ -96,6 +96,27 @@ describe("resolveUserCloudPath", () => {
   });
 });
 
+describe("sanitizeUploadFilename", () => {
+  it("returns the basename of a safe filename", () => {
+    expect(cloudPath.sanitizeUploadFilename("photo.jpg")).toBe("photo.jpg");
+  });
+
+  it("strips directory components from upload names", () => {
+    expect(cloudPath.sanitizeUploadFilename("../../../etc/passwd")).toBe("passwd");
+  });
+
+  it("rejects empty, dot, and dot-dot names", () => {
+    expect(() => cloudPath.sanitizeUploadFilename("")).toThrow(internalErr("INVALID_PATH"));
+    expect(() => cloudPath.sanitizeUploadFilename(".")).toThrow(internalErr("INVALID_PATH"));
+    expect(() => cloudPath.sanitizeUploadFilename("..")).toThrow(internalErr("INVALID_PATH"));
+  });
+
+  it("rejects null bytes and embedded traversal markers", () => {
+    expect(() => cloudPath.sanitizeUploadFilename("foo\0bar")).toThrow(internalErr("INVALID_PATH"));
+    expect(() => cloudPath.sanitizeUploadFilename("..secret")).toThrow(internalErr("INVALID_PATH"));
+  });
+});
+
 describe("getUserRelativePath", () => {
   it("returns the path relative to the user's root", () => {
     const abs = cloudPath.resolveUserCloudPath("dave", "docs/file.txt");

@@ -58,3 +58,18 @@ export function getUserRelativePath(username: string, absolutePath: string): str
   const userRoot = getUserCloudRoot(username);
   return path.relative(userRoot, absolutePath) || "";
 }
+
+/** Strip path components from an upload filename and reject traversal attempts. */
+export function sanitizeUploadFilename(filename: string): string {
+  if (filename.includes("\0")) {
+    throw new Error(internalError.invalidPath);
+  }
+  const safeName = path.basename(filename);
+  if (!safeName || safeName === "." || safeName === "..") {
+    throw new Error(internalError.invalidPath);
+  }
+  if (safeName.includes("/") || safeName.includes("\\") || safeName.includes("..")) {
+    throw new Error(internalError.invalidPath);
+  }
+  return safeName;
+}
