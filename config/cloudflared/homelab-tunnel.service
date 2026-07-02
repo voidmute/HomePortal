@@ -1,0 +1,16 @@
+[Unit]
+Description=Cloudflare Tunnel for Family Home Portal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/cloudflared --no-autoupdate tunnel run --token ${TUNNEL_TOKEN}
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+
+# Note: `cloudflared service install <token>` creates its own unit.
+# This file documents the expected service layout for manual installs.

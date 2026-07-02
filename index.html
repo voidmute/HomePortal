@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>HomePortal · Уютный self-hosted портал для всей семьи</title>
+    <meta
+      name="description"
+      content="HomePortal — self-hosted семейный портал: вход без паролей, личное облако, мониторинг сервера, бэкапы и мобильный доступ. Разворачивается одной командой."
+    />
+    <meta name="theme-color" content="#FDF8F3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#211A15" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="HomePortal" />
+    <meta
+      property="og:description"
+      content="Уютный self-hosted портал для всей семьи. Одна команда — и он ваш."
+    />
+    <meta property="og:image" content="assets/banner.png" />
+
+    <link rel="icon" href="assets/mark.png" />
+    <link rel="apple-touch-icon" href="assets/mark.png" />
+    <link rel="preload" as="font" type="font/ttf" href="assets/fonts/GreatVibes-Regular.ttf" crossorigin />
+    <link rel="stylesheet" href="styles.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.3.1",
+          "react/": "https://esm.sh/react@18.3.1/",
+          "react-dom": "https://esm.sh/react-dom@18.3.1?external=react",
+          "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
+          "framer-motion": "https://esm.sh/framer-motion@11.15.0?external=react,react-dom",
+          "htm": "https://esm.sh/htm@3.1.1",
+          "react-feather": "https://esm.sh/react-feather@2.0.10?external=react"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Instant brand paint before the app module hydrates -->
+      <div class="boot" aria-hidden="true">
+        <svg class="boot__mark" viewBox="0 0 120 150" role="img" aria-label="HomePortal">
+          <path
+            d="M14 140 V50 a46 46 0 0 1 92 0 V140 Z M36 140 V50 a24 24 0 0 1 48 0 V140 Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </div>
+    </div>
+
+    <noscript>
+      <div class="noscript">
+        <h1>HomePortal</h1>
+        <p>Уютный self-hosted портал для всей семьи. Разверните его одной командой:</p>
+        <pre><code>curl -fsSL https://raw.githubusercontent.com/voidmute/HomePortal/main/scripts/bootstrap-cli.sh | sudo bash</code></pre>
+        <p><a href="https://github.com/voidmute/HomePortal">Открыть репозиторий на GitHub</a></p>
+      </div>
+    </noscript>
+
+    <script>
+      // Surface module/runtime errors instead of leaving the boot splash forever.
+      window.addEventListener("error", function (e) {
+        if (document.querySelector("main")) return;
+        var b = document.querySelector(".boot");
+        if (b) {
+          b.innerHTML =
+            '<pre style="max-width:680px;white-space:pre-wrap;font:13px/1.5 ui-monospace,monospace;color:#F0E4D4;padding:24px">' +
+            "Ошибка загрузки: " +
+            String((e && (e.message || e.error)) || e) +
+            "</pre>";
+        }
+      });
+    </script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

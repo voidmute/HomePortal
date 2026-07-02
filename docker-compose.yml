@@ -1,0 +1,78 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: homelab-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      # Localhost only — public HTTPS via cloudflared tunnel
+      - "127.0.0.1:3000:3000"
+    environment:
+      DATABASE_URL: postgresql://homelab:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/homelab
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      REDIS_URL: redis://redis:6379
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env}
+      PRIVATE_CLOUD_ROOT: /data/cloud
+      BACKUP_ROOT: /data/backups
+      BACKUP_CRON: ${BACKUP_CRON:-0 2 * * *}
+      NODE_ENV: production
+      TRUST_PROXY: "true"
+      APP_URL: ${APP_URL:?Set APP_URL in .env}
+    volumes:
+      - private_cloud_data:/data/cloud
+      - backup_data:/data/backups
+      - ./scripts:/app/scripts:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - homelab_net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: homelab-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: homelab
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: homelab
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - homelab_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homelab -d homelab"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: homelab-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - homelab_net
+    command: redis-server --appendonly yes
+
+networks:
+  homelab_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  private_cloud_data:
+  backup_data:

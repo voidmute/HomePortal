@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Нет подключения — HomePortal</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #FDF8F3;
+      color: #2A221C;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card {
+      max-width: 26rem;
+    }
+    .mark {
+      width: 4rem;
+      height: 4rem;
+      margin: 0 auto 1.5rem;
+    }
+    h1 {
+      font-size: 1.375rem;
+      margin: 0 0 0.75rem;
+    }
+    p {
+      margin: 0 0 1.5rem;
+      color: #7A726A;
+      line-height: 1.5;
+    }
+    button {
+      appearance: none;
+      border: none;
+      background: #D4A96A;
+      color: #2A221C;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    button:active { background: #B8894F; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <svg class="mark" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fill="#D4A96A"
+        fill-rule="evenodd"
+        d="M342,512 A170,170 0 0 1 682,512 L682,772 L342,772 Z M384,512 A128,128 0 0 1 640,512 L640,730 L384,730 Z"
+      />
+    </svg>
+    <h1>Нет подключения к интернету</h1>
+    <p>Проверьте соединение с сетью и попробуйте снова.</p>
+    <button onclick="location.reload()">Обновить страницу</button>
+  </div>
+</body>
+</html>

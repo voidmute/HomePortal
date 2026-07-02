@@ -1,0 +1,16 @@
++ My portal
+DOMAIN portal.example.com
+ADMIN alice
+USERS alice bob carol
++ Generate a real password before deploying (e.g. `openssl rand -base64 24`)
++ and keep it in sync with the password in DATABASE_URL below.
+POSTGRES_PASSWORD changeme
+DATABASE_URL postgresql://homelab:changeme@postgres:5432/homelab
+REDIS_URL redis://redis:6379
+PRIVATE_CLOUD_ROOT /data/cloud
+BACKUP_ROOT /data/backups
+BACKUP_CRON "0 2 * * *"
+NODE_ENV production
+TRUST_PROXY true
+REPO_SSH git@github.com:voidmute/family-home-portal.git
+REPO_DIR /root/homelab

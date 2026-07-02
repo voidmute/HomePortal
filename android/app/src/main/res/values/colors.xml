@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand palette (kept in sync with tailwind.config.ts / src/styles/tokens.css) -->
+    <color name="colorPrimary">#D4A96A</color>
+    <color name="colorPrimaryDark">#B8894F</color>
+    <color name="colorAccent">#D4A96A</color>
+</resources>

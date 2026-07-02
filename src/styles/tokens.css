@@ -1,0 +1,22 @@
+:root {
+  --color-cream: #fdf8f3;
+  --color-cream-muted: #f7efe6;
+  --color-warm: #f0e4d4;
+  --color-espresso: #2a221c;
+  --color-charcoal: #3d342c;
+  --color-amber: #d4a96a;
+  --color-amber-dark: #b8894f;
+  --color-sage: #9aab8c;
+  --color-rose: #e8c4b8;
+  --color-stone: #7a726a;
+  --color-white: #ffffff;
+  --color-glass: rgba(253, 248, 243, 0.78);
+
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Instrument Serif", Georgia, serif;
+
+  --radius-bezel: 2rem;
+  --radius-inner: calc(2rem - 0.375rem);
+
+  --ease-premium: cubic-bezier(0.32, 0.72, 0, 1);
+}

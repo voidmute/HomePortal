@@ -1,0 +1,61 @@
+# dependencies
+/node_modules
+/cli/node_modules
+/cli/dist
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files
+.env
+.env*.local
+.deploy.env
+.kyto.config
+*.bak
+.kyto/portal.local.kyto
+.kyto/portal.local.kyto.enc
+/src/generated/
+/generated/
+/scripts/generated/
+/.kyto/target/
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# data
+/data/
+
+# capacitor / android local builds
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+*.apk
+*.aab
+
+# android release signing — never commit the keystore or its passwords
+android/keystore/
+android/keystore.properties
