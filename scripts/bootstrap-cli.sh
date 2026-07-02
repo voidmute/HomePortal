@@ -63,7 +63,12 @@ if [ ! -d "$REPO/.git" ]; then
     exit 1
   fi
 else
-  echo "==> Repository already at $REPO"
+  echo "==> Updating existing repository at $REPO..."
+  if ! git -C "$REPO" pull --ff-only; then
+    echo "Update failed (local changes?). Fetching and hard-resetting to origin/main..."
+    git -C "$REPO" fetch origin
+    git -C "$REPO" reset --hard origin/main
+  fi
 fi
 
 cd "$REPO"

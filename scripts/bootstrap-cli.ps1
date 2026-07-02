@@ -42,7 +42,13 @@ if (-not (Test-Path (Join-Path $RepoDir ".git"))) {
     exit 1
   }
 } else {
-  Write-Host "==> Repository already at $RepoDir"
+  Write-Host "==> Updating existing repository at $RepoDir..."
+  git -C $RepoDir pull --ff-only
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "Update failed (local changes?). Fetching and hard-resetting to origin/main..."
+    git -C $RepoDir fetch origin
+    git -C $RepoDir reset --hard origin/main
+  }
 }
 
 Write-Host "==> Installing CLI dependencies..."
