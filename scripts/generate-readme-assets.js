@@ -74,14 +74,18 @@ async function pngBuffer(svg, width, height) {
   return sharp(Buffer.from(svg), { density: 300 }).resize(width, height).png().toBuffer();
 }
 
-// Favicon badge: cream circle with an espresso portal arch.
+// Favicon badge: espresso rounded-square, amber portal arch inside an amber ring.
 function faviconSvg(size) {
   const mark = archPath({});
-  const scale = 0.30 * (size / 512);
+  const c = size / 2;
+  const ringR = size * 0.33;
+  const ringW = size * 0.035;
+  const scale = 0.26 * (size / 512);
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${size}" height="${size}" rx="${size / 2}" fill="${COLOR.cream}"/>
-    <g transform="translate(${size / 2} ${size / 2}) scale(${scale}) translate(-512 -512)">
-      <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
+    <rect width="${size}" height="${size}" rx="${size * 0.24}" fill="${COLOR.espresso}"/>
+    <circle cx="${c}" cy="${c}" r="${ringR}" fill="none" stroke="${COLOR.amber}" stroke-width="${ringW}"/>
+    <g transform="translate(${c} ${c}) scale(${scale}) translate(-512 -557)">
+      <path d="${mark}" fill="${COLOR.amber}" fill-rule="evenodd"/>
     </g>
   </svg>`;
 }
