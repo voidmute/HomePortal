@@ -112,28 +112,51 @@ async function generateBanner() {
 }
 
 async function generateMark() {
-  const size = 240;
+  // Same arch as the README banner center — cream background, espresso portal mark.
+  const sizes = [
+    { name: "mark.png", size: 180 },
+    { name: "favicon-32.png", size: 32 },
+  ];
   const mark = archPath({});
-  const svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <clipPath id="circle">
-        <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}"/>
-      </clipPath>
-    </defs>
-    <g clip-path="url(#circle)">
-      <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="${COLOR.amber}"/>
-      <g transform="translate(${size / 2} ${size / 2}) scale(0.5) translate(-512 -512)">
-        <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
-      </g>
+
+  for (const { name, size } of sizes) {
+    const scale = size <= 32 ? 0.26 : 0.30;
+    const svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${size}" height="${size}" rx="${size / 2}" fill="${COLOR.cream}"/>
+    <g transform="translate(${size / 2} ${size / 2}) scale(${scale}) translate(-512 -512)">
+      <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
     </g>
   </svg>`;
-  await writePng(svg, path.join(OUT_DIR, "mark.png"), size, size);
+    await writePng(svg, path.join(OUT_DIR, name), size, size);
+  }
+
+  // SVG favicon for crisp rendering at any size
+  const svgIcon = `<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+    <rect width="180" height="180" rx="90" fill="${COLOR.cream}"/>
+    <g transform="translate(90 90) scale(0.30) translate(-512 -512)">
+      <path d="${mark}" fill="${COLOR.espresso}" fill-rule="evenodd"/>
+    </g>
+  </svg>`;
+  await fs.writeFile(path.join(OUT_DIR, "favicon.svg"), svgIcon);
+}
+
+async function copyToSiteAssets() {
+  const siteDir = path.join(ROOT, "assets");
+  await fs.mkdir(siteDir, { recursive: true });
+  for (const file of ["mark.png", "favicon-32.png", "favicon.svg", "banner.png"]) {
+    const src = path.join(OUT_DIR, file);
+    if (await fs.stat(src).catch(() => null)) {
+      await fs.copyFile(src, path.join(siteDir, file));
+    }
+  }
 }
 
 async function main() {
   await generateBanner();
   await generateMark();
-  console.log("README assets generated in .github/assets/ (banner + mark)");
+  await copyToSiteAssets();
+  console.log("README assets generated in .github/assets/ (banner + mark + favicon)");
+  console.log("Site assets copied to assets/");
 }
 
 main().catch((err) => {
