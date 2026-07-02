@@ -49,4 +49,4 @@ Write-Host "==> Installing CLI dependencies..."
 npm --prefix (Join-Path $RepoDir "cli") install
 
 Write-Host "==> Launching HomePortal CLI..."
-npm --prefix (Join-Path $RepoDir "cli") start
+npm --prefix (Join-Path $RepoDir "cli") run start:windows

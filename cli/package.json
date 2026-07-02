@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/index.tsx",
+    "start:linux": "tsx src/index.linux.tsx",
+    "start:windows": "tsx src/index.windows.tsx",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

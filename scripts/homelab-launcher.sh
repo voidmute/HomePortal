@@ -47,4 +47,4 @@ if [ ! -d cli/node_modules ]; then
   npm ci --prefix cli
 fi
 
-exec npm run start --prefix cli
+exec npm run start:linux --prefix cli
