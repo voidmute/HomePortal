@@ -37,57 +37,34 @@ function scriptTextPath(text, fontSize, anchorX, baselineY, anchor) {
 
 const ROOT = path.resolve(__dirname, "..");
 const OUT_DIR = path.join(ROOT, ".github", "assets");
+const LOGO_SOURCE = path.join(ROOT, "assets", "source", "homeportal.png");
 
 const COLOR = {
   cream: "#FDF8F3",
   creamMuted: "#F7EFE6",
   warm: "#F0E4D4",
   espresso: "#2A221C",
-  charcoal: "#3D342C",
-  amber: "#D4A96A",
   amberDark: "#B8894F",
   sage: "#9AAB8C",
   rose: "#E8C4B8",
   stone: "#7A726A",
+  amber: "#D4A96A",
 };
-
-function archPath({ cx = 512, cy = 512, outerRadius = 170, straight = 260, thickness = 42 }) {
-  const oLeft = cx - outerRadius;
-  const oRight = cx + outerRadius;
-  const oBottom = cy + straight;
-  const innerRadius = outerRadius - thickness;
-  const iLeft = cx - innerRadius;
-  const iRight = cx + innerRadius;
-  const iBottom = cy + straight - thickness;
-  return [
-    `M${oLeft},${cy} A${outerRadius},${outerRadius} 0 0 1 ${oRight},${cy} L${oRight},${oBottom} L${oLeft},${oBottom} Z`,
-    `M${iLeft},${cy} A${innerRadius},${innerRadius} 0 0 1 ${iRight},${cy} L${iRight},${iBottom} L${iLeft},${iBottom} Z`,
-  ].join(" ");
-}
 
 async function writePng(svg, outPath, width, height) {
   await fs.mkdir(path.dirname(outPath), { recursive: true });
   await sharp(Buffer.from(svg), { density: 300 }).resize(width, height).png().toFile(outPath);
 }
 
-async function pngBuffer(svg, width, height) {
-  return sharp(Buffer.from(svg), { density: 300 }).resize(width, height).png().toBuffer();
+async function logoPng(size) {
+  return sharp(LOGO_SOURCE).resize(size, size).png().toBuffer();
 }
 
-// Favicon badge: espresso rounded-square, amber portal arch inside an amber ring.
-function faviconSvg(size) {
-  const mark = archPath({});
-  const c = size / 2;
-  const ringR = size * 0.33;
-  const ringW = size * 0.035;
-  const scale = 0.26 * (size / 512);
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${size}" height="${size}" rx="${size * 0.24}" fill="${COLOR.espresso}"/>
-    <circle cx="${c}" cy="${c}" r="${ringR}" fill="none" stroke="${COLOR.amber}" stroke-width="${ringW}"/>
-    <g transform="translate(${c} ${c}) scale(${scale}) translate(-512 -557)">
-      <path d="${mark}" fill="${COLOR.amber}" fill-rule="evenodd"/>
-    </g>
-  </svg>`;
+function faviconSvgFromPng(pngBuffer, viewSize) {
+  const b64 = pngBuffer.toString("base64");
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${viewSize}" height="${viewSize}" viewBox="0 0 ${viewSize} ${viewSize}">
+  <image href="data:image/png;base64,${b64}" width="${viewSize}" height="${viewSize}"/>
+</svg>`;
 }
 
 async function generateBanner() {
@@ -95,13 +72,8 @@ async function generateBanner() {
   const h = 400;
   const cx = w / 2;
   const logoY = 150;
-  // Embed the EXACT favicon the website uses (assets/favicon.svg from index.html).
   const faviconSize = 164;
-  const faviconSvgSource = await fs.readFile(
-    path.join(ROOT, "assets", "favicon.svg"),
-    "utf8"
-  );
-  const faviconPng = await pngBuffer(faviconSvgSource, 512, 512);
+  const faviconPng = await logoPng(512);
   const faviconUri = `data:image/png;base64,${faviconPng.toString("base64")}`;
   const svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -137,13 +109,12 @@ async function generateBanner() {
 }
 
 async function generateMark() {
-  for (const { name, size } of [
-    { name: "mark.png", size: 180 },
-    { name: "favicon-32.png", size: 64 },
-  ]) {
-    await writePng(faviconSvg(size), path.join(OUT_DIR, name), size, size);
-  }
-  await fs.writeFile(path.join(OUT_DIR, "favicon.svg"), faviconSvg(180));
+  const markPng = await logoPng(180);
+  const favicon32Png = await logoPng(64);
+  const faviconSvgPng = await logoPng(180);
+  await fs.writeFile(path.join(OUT_DIR, "mark.png"), markPng);
+  await fs.writeFile(path.join(OUT_DIR, "favicon-32.png"), favicon32Png);
+  await fs.writeFile(path.join(OUT_DIR, "favicon.svg"), faviconSvgFromPng(faviconSvgPng, 180));
 }
 
 async function copyToSiteAssets() {
@@ -158,7 +129,10 @@ async function copyToSiteAssets() {
 }
 
 async function main() {
-  // Favicon first so the banner can embed the exact assets/favicon.svg.
+  if (!(await fs.stat(LOGO_SOURCE).catch(() => null))) {
+    throw new Error(`Logo source not found: ${LOGO_SOURCE}`);
+  }
+  await fs.mkdir(OUT_DIR, { recursive: true });
   await generateMark();
   await fs.mkdir(path.join(ROOT, "assets"), { recursive: true });
   await fs.copyFile(
