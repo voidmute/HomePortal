@@ -10,9 +10,6 @@ import { Input } from "@/components/ui/Input";
 import { ArrowRight, Icon } from "@/components/ui/Icon";
 import { fadeSlideUp, spring } from "@/lib/motion";
 import { msg } from "@/lib/messages";
-import { AUTHORIZED_NAMES } from "@/generated/users";
-
-const FAMILY_MEMBERS = [...AUTHORIZED_NAMES];
 
 type Step = "name" | "totp";
 
@@ -32,11 +29,6 @@ export function AuthForm() {
     const trimmed = name.trim().toLowerCase();
     if (!trimmed) {
       setError(msg.nameRequired);
-      return;
-    }
-
-    if (!(FAMILY_MEMBERS as readonly string[]).includes(trimmed)) {
-      setError(msg.accessDenied);
       return;
     }
 
