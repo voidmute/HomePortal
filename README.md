@@ -1,5 +1,5 @@
 ﻿<p align="center">
-  <img src=".github/assets/banner-v2.png" alt="HomePortal banner" width="100%" />
+  <img src=".github/assets/banner-v3.png" alt="HomePortal banner" width="100%" />
 </p>
 
 <p align="center">
@@ -29,7 +29,7 @@
       <br><br>
       <strong>Без паролей</strong>
       <br><br>
-      <p align="center"><sub>TOTP через QR, шифрование секретов в БД, проверка имён только на сервере, <code>iron-session</code>.</sub></p>
+      <p align="center"><sub>TOTP-вход через QR, безопасные cookie-сессии на <code>iron-session</code>.</sub></p>
       <br>
     </td>
     <td align="center" valign="top" width="33%">
@@ -38,7 +38,7 @@
       <br><br>
       <strong>Личное облако</strong>
       <br><br>
-      <p align="center"><sub>Файлы изолированы по пользователю, санитизация имён при загрузке, лимит размера, защита от traversal/symlink.</sub></p>
+      <p align="center"><sub>Файлы каждого пользователя изолированы, пути защищены от traversal/symlink escape.</sub></p>
       <br>
     </td>
     <td align="center" valign="top" width="33%">

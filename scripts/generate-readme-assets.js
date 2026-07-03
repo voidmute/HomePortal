@@ -106,6 +106,7 @@ async function generateBanner() {
   </svg>`;
   await writePng(svg, path.join(OUT_DIR, "banner.png"), w, h);
   await writePng(svg, path.join(OUT_DIR, "banner-v2.png"), w, h);
+  await writePng(svg, path.join(OUT_DIR, "banner-v3.png"), w, h);
 }
 
 async function generateMark() {
@@ -120,7 +121,7 @@ async function generateMark() {
 async function copyToSiteAssets() {
   const siteDir = path.join(ROOT, "assets");
   await fs.mkdir(siteDir, { recursive: true });
-  for (const file of ["mark.png", "favicon-32.png", "favicon.svg", "banner.png", "banner-v2.png"]) {
+  for (const file of ["mark.png", "favicon-32.png", "favicon.svg", "banner.png", "banner-v2.png", "banner-v3.png"]) {
     const src = path.join(OUT_DIR, file);
     if (await fs.stat(src).catch(() => null)) {
       await fs.copyFile(src, path.join(siteDir, file));
