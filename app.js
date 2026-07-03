@@ -23,14 +23,16 @@ const html = htm.bind(createElement);
 const REPO = "https://github.com/voidmute/HomePortal";
 
 /* ---------------------------------------------------------------- brand mark */
-const Mark = ({ className }) => html`
-  <svg class=${className} viewBox="0 0 120 150" role="img" aria-label="HomePortal">
-    <path
-      d="M14 140 V50 a46 46 0 0 1 92 0 V140 Z M36 140 V50 a24 24 0 0 1 48 0 V140 Z"
-      fill="currentColor"
-      fill-rule="evenodd"
-    />
-  </svg>
+const Mark = ({ className, style }) => html`
+  <img
+    class=${className}
+    style=${style}
+    src="assets/mark.png"
+    alt=""
+    width="120"
+    height="120"
+    decoding="async"
+  />
 `;
 
 /* ---------------------------------------------------------------- motion util */
