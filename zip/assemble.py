@@ -80,11 +80,26 @@ on reboot.
 
 USE BW-FLASHER (correct method)
 -------------------------------
-1. Install BW-Flasher: https://github.com/scooterteam/bw-flasher/releases
-2. Wiring: USB-UART adapter (CH340/CP2102/FTDI) at 5V + dashboard cable
-3. Open BW-Flasher and select: elite-30kmh-patched.bin
-4. Flash with the scooter powered on
-5. Disconnect UART, reboot scooter, test in Sport mode (target {SPORT_KMH} km/h)
+There is NO official Android app for Elite MCU flashing today.
+XiaoFlasher / DownG / ScooterHacking Utility (BLE) do not support this model.
+
+You need a computer + UART cable:
+- Windows: https://github.com/scooterteam/bw-flasher/releases (bwflasher-...-windows-x64.exe)
+- macOS: same releases page (.zip)
+- Linux: same releases page (optional; Windows/Mac is easier)
+
+Steps:
+1. Copy this zip to your PC (you can download it on Android first).
+2. Buy/connect: USB-UART adapter (CH340/CP2102/FTDI, 5V) + dashboard/Julet cable.
+3. Open BW-Flasher on the computer and select: elite-30kmh-patched.bin
+4. Flash with the scooter powered on.
+5. Disconnect UART, reboot scooter, test Sport mode (target {SPORT_KMH} km/h).
+
+ANDROID ONLY?
+-------------
+- Phone can store the zip and .bin files.
+- Phone cannot flash the Elite controller with XiaoFlasher (that caused the reboot loop).
+- OTG serial flashing from Android is not supported by BW-Flasher and is not recommended.
 
 RECOVERY (if stuck rebooting / after a bad flash)
 -------------------------------------------------
